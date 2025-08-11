@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Anamnes – Axial spondylartrit</title>
+  <style>
+    :root{
+      --bg:#f7f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --border:#e2e8f0;
+      --accent:#111827;
+      --accent-contrast:#ffffff;
+    }
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font-family: ui-sans-serif, system-ui, sans-serif;
+    }
+    .container{max-width:880px; margin:0 auto; padding:24px 16px 64px}
+    h1{font-size:1.8rem; margin-bottom:0.5rem}
+    p.lead{color:var(--muted); margin-bottom:1.5rem}
+    .card{background:var(--card); border:1px solid var(--border); border-radius:20px; padding:20px; margin-bottom:24px}
+    .row{display:flex; gap:12px; align-items:center; padding:10px 0; border-top:1px solid var(--border)}
+    .row:first-child{border-top:0}
+    .q{flex:1}
+    .btns{display:flex; gap:8px}
+    button{
+      border:1px solid var(--border); background:#fff; color:var(--text);
+      padding:6px 14px; border-radius:999px; cursor:pointer; font-weight:600;
+    }
+    button[data-variant="primary"]{
+      background:var(--accent); color:var(--accent-contrast); border-color:transparent;
+    }
+    textarea{
+      width:100%; height:220px; padding:14px; border:1px solid var(--border); border-radius:16px;
+      font-family:monospace; font-size:14px; background:#fff; resize:vertical;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Anamnes – Axial spondylartrit</h1>
+      <p class="lead">Kryssa i <strong>Ja</strong> eller <strong>Nej</strong> på varje fråga. Journaltexten skapas automatiskt.</p>
+    </header>
+
+    <div class="card">
+      <h2>Kriterier – misstanke om axial spondylartrit</h2>
+      <p>Om <strong>4 av dessa 5</strong> kriterier är uppfyllda bör man misstänka axial spondylartrit.</p>
+      <div id="section1"></div>
+    </div>
+
+    <div class="card">
+      <div id="section2"></div>
+    </div>
+
+    <button id="copy">Kopiera journaltext</button>
+    <button id="reset">Rensa alla svar</button>
+    <label for="journal" style="display:block; margin-top:16px; color:var(--muted)">Journaltext</label>
+    <textarea id="journal" readonly></textarea>
+
+  </main>
+
+  <script>
+    const SECTION1 = [
+      { key: "under40", label: "Under 40 år gammal?" },
+      { key: "smygande", label: "Smygande debut?" },
+      { key: "battreRorelse", label: "Blir bättre av att röra på sig?" },
+      { key: "inteBattreVila", label: "Smärtan blir inte bättre av att vila?" },
+      { key: "nattS", label: "Smärta under natten? (ffa senare delen av natten/tidig morgon)" }
+    ];
+
+    const SECTION2 = [
+      { key: "battreNSAID", label: "Blir bättre av NSAID?" },
+      { key: "morgonstel", label: "Morgonstelhet?" },
+      { key: "battreNSAID2", label: "Bättre av NSAID?" },
+      { key: "slaktReuma", label: "Reumatisk sjukdom i släkten?" },
+      { key: "psoriasis", label: "Psoriasis hos patienten eller föräldrar?" },
+      { key: "dactylit", label: "Dactylit? (Att ett finger eller en tå svullnar upp)" },
+      { key: "ogon", label: "Problem med ögon (smärta, rodnad, kliande eller diagnostiserad uveit)" },
+      { key: "ibd", label: "Crohns sjukdom eller ulcerös kolit?" }
+    ];
+
+    const state = Object.fromEntries([...SECTION1, ...SECTION2].map(q => [q.key, ""]));
+
+    function renderSection(containerId, questions){
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      questions.forEach(q => {
+        const row = document.createElement('div');
+        row.className = 'row';
+        const qDiv = document.createElement('div');
+        qDiv.className = 'q';
+        qDiv.textContent = q.label;
+        const btns = document.createElement('div');
+        btns.className = 'btns';
+        const mkBtn = (text,val) => {
+          const b = document.createElement('button');
+          b.textContent = text;
+          if(state[q.key] === val) b.setAttribute('data-variant','primary');
+          b.onclick = () => { state[q.key] = val; update(); };
+          return b;
+        }
+        btns.append(mkBtn('Ja','Ja'), mkBtn('Nej','Nej'), mkBtn('–',''));
+        row.append(qDiv, btns);
+        container.append(row);
+      });
+    }
+
+    function buildJournal(){
+      let text = '**Axial spondylartrit – kriterier**\n';
+      SECTION1.forEach(q => {
+        text += `${q.label} ${state[q.key] || 'Ej angivet'}\n`;
+      });
+      SECTION2.forEach(q => {
+        text += `${q.label} ${state[q.key] || 'Ej angivet'}\n`;
+      });
+      return text;
+    }
+
+    function update(){
+      renderSection('section1', SECTION1);
+      renderSection('section2', SECTION2);
+      document.getElementById('journal').value = buildJournal();
+    }
+
+    document.getElementById('copy').onclick = async () => {
+      await navigator.clipboard.writeText(document.getElementById('journal').value);
+    };
+
+    document.getElementById('reset').onclick = () => {
+      Object.keys(state).forEach(k => state[k] = '');
+      update();
+    };
+
+    update();
+  </script>
+</body>
+</html>
