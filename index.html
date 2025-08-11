@@ -110,7 +110,7 @@
     }
 
     function buildJournal(){
-      let text = <strong>'Tecken på inflammatorisk ryggsmärta eller axial spondylartrit' </strong>\n;
+      let text = <strong>'Frågor om inflammatorisk ryggsmärta' </strong>\n;
       SECTION1.forEach(q => {
         text += `${q.label} ${state[q.key] || 'Ej angivet'}\n`;
       });
