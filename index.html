@@ -47,13 +47,13 @@
     </header>
 
     <div class="card">
-      <h2>Kriterier – misstanke om axial spondylartrit</h2>
+      <h2>Frågor om inflammatorisk ryggsmärta</h2>
       <p>Om <strong>4 av dessa 5</strong> kriterier är uppfyllda bör man misstänka axial spondylartrit.</p>
       <div id="section1"></div>
     </div>
 
     <div class="card">
-       <h2>Ytterligare tecken på axial spondylartrit</h2>
+      <h2>Ytterligare tecken på axial spondylartrit</h2>
       <div id="section2"></div>
     </div>
 
@@ -111,7 +111,7 @@
     }
 
     function buildJournal(){
-      let text = <strong>'Frågor om inflammatorisk ryggsmärta' </strong>\n;
+      let text = '**Frågor om inflammatorisk ryggsmärta**\n';
       SECTION1.forEach(q => {
         text += `${q.label} ${state[q.key] || 'Ej angivet'}\n`;
       });
